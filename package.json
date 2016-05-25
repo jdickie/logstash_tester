@@ -1,0 +1,16 @@
+{
+  "name": "publishing_logging",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "test": "test"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "async": "^2.0.0-rc.5",
+    "fs": "0.0.2",
+    "lodash": "^4.13.1"
+  }
+}
