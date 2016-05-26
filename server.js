@@ -10,18 +10,23 @@ var async = require('async');
 var failureFrequency = 4;
 var messageCount = 0;
 var logger = new LogServer();
-
+var timeBetween = 5000;
 
 async.forever(function(next) {
     var logMessage = "";
-    if (messageCount % failureFrequency) {
-        logger.getFailureMessage(next);
-    } else {
-        logger.getSuccessMessage(next);
-    }
-    messageCount++;
+    setTimeout(function(callback) {
+        if (messageCount % failureFrequency) {
+            logger.getSuccessMessage(next);
+        } else {
+            logger.getFailureMessage(next);
+        }
+        messageCount++;
+        callback(null);
+    }, timeBetween, next);
+
 }, function(err) {
     if (err) {
         console.log(err);
+        next();
     }
 });

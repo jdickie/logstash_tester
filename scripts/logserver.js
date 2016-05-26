@@ -9,7 +9,7 @@ var LogServer = function() {};
  *
  * @type {Function}
  */
-LogServer.prototype.MessageTemplate = _.template("<%= timestamp %> Message=<%= message %> UserId=<%= userid %> Queue=<%= queue %> Response=<%= response %>");
+LogServer.prototype.MessageTemplate = _.template("<%= timestamp %> Message=<%= message %> UserId=<%= userid %> Queue=<%= queue %> Response=<%= response %>\n");
 
 LogServer.prototype.LogPath = "/tmp/tmpLog.log";
 
@@ -17,7 +17,7 @@ LogServer.prototype.getFailureMessage = function(callback) {
     var self = this;
     try {
         fs.writeFile(self.LogPath, self.MessageTemplate({
-                timestamp: Date.now(),
+                timestamp: new Date().getTime(),
                 message: "This is a failure message",
                 userid: _.random(1000, 20000),
                 queue: "IncomingQueue",
@@ -33,7 +33,7 @@ LogServer.prototype.getSuccessMessage = function(callback) {
     var self = this;
     try {
         fs.writeFile(self.LogPath, self.MessageTemplate({
-                timestamp: Date.now(),
+                timestamp: new Date().getTime(),
                 message: "This is a success message",
                 userid: _.random(1000, 20000),
                 queue: "IncomingQueue",
