@@ -11,7 +11,7 @@ var LogServer = function () {
  *
  * @type {Function}
  */
-LogServer.prototype.MessageTemplate = _.template("<%= timestamp %> <%= message %> ThingId=<%= thingId %> CorrelationId=<%= correlation_id %> URL=<%= endpoint %> User=<%= username %> Response=<%= response %>\n");
+LogServer.prototype.MessageTemplate = _.template("<%= timestamp %> <%= message %> ThingId=<%= thingId %> CorrelationId=<%= correlation_id %> URL=<%= endpoint %> User=<%= username %> Response=<%= response %> \n");
 
 LogServer.prototype.LogPath = "/tmp/tmpLog.log";
 
@@ -19,17 +19,35 @@ LogServer.prototype.getTimeStamp = function () {
     return moment().format();
 };
 
+LogServer.prototype.createLogFileIfNotExists = function(callback) {
+    var self = this;
+    fs.exists(self.LogPath, function(exists) {
+        if (!exists) {
+            fs.writeFile(self.LogPath, '', function(err) {
+                if (err) {
+                    callback(err);
+                    return;
+                }
+                callback();
+            });
+        } else {
+            callback();
+        }
+    });
+};
+
 /**
  *
  * @param callback
  * @param guid
  * @param url
+ * @param user
  * @param thingId
  */
 LogServer.prototype.getFailureMessage = function (callback, guid, url, user, thingId) {
     var self = this;
     try {
-        fs.writeFile(self.LogPath, self.MessageTemplate({
+        fs.appendFile(self.LogPath, self.MessageTemplate({
                 timestamp: self.getTimeStamp(),
                 message: "This is a failure message",
                 thingId: thingId,
@@ -49,12 +67,13 @@ LogServer.prototype.getFailureMessage = function (callback, guid, url, user, thi
  * @param callback
  * @param guid
  * @param url
+ * @param user
  * @param thingId
  */
 LogServer.prototype.getSuccessMessage = function (callback, guid, url, user, thingId) {
     var self = this;
     try {
-        fs.writeFile(self.LogPath, self.MessageTemplate({
+        fs.appendFile(self.LogPath, self.MessageTemplate({
                 timestamp: self.getTimeStamp(),
                 message: "This is a success message",
                 thingId: thingId,

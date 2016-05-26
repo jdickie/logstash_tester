@@ -22,43 +22,54 @@ var generateGuid = function () {
     return guid.raw();
 };
 
-async.forever(function (next) {
-    var messageGuid = generateGuid(),
-        thing, list;
 
-
-    setTimeout(function (callback) {
-        thing = new Thing().getStory();
-        list = new Thing().getList();
-        console.log("thing: ", thing.id);
-        console.log("list: ", list.id);
-        async.each([thing, list], function(thingItem, eachDone) {
-            async.eachSeries(thingItem.endpoints, function(url, seriesCallback) {
-                if (messageCount % failureFrequency) {
-                    setTimeout(function() {
-                        logger.getSuccessMessage(seriesCallback, messageGuid, url, thingItem.user, thingItem.id);
-                    }, 1000);
-                } else {
-                    setTimeout(function() {
-                        logger.getFailureMessage(seriesCallback, messageGuid, url, thingItem.user, thingItem.id);
-                    }, 1000);
-                }
-                messageCount++;
-            }, function done(err) {
-                if (err) {
-                    console.log(err);
-                }
-                eachDone();
-            });
-        }, function(err) {
-            callback();
-        });
-
-    }, timeBetween, next);
-
-}, function (err) {
+var startLogging = function(err) {
     if (err) {
         console.log(err);
+        return;
     }
-    next();
-});
+
+    async.forever(function (next) {
+        var messageGuid = generateGuid(),
+            thing, list;
+
+
+        setTimeout(function (callback) {
+            thing = new Thing().getStory();
+            list = new Thing().getList();
+            console.log("thing: ", thing.id);
+            console.log("list: ", list.id);
+            async.each([thing, list], function(thingItem, eachDone) {
+                async.eachSeries(thingItem.endpoints, function(url, seriesCallback) {
+                    if (messageCount % failureFrequency) {
+                        setTimeout(function() {
+                            logger.getSuccessMessage(seriesCallback, messageGuid, url, thingItem.user, thingItem.id);
+                        }, 1000);
+                    } else {
+                        setTimeout(function() {
+                            logger.getFailureMessage(seriesCallback, messageGuid, url, thingItem.user, thingItem.id);
+                        }, 1000);
+                    }
+                    messageCount++;
+                }, function done(err) {
+                    if (err) {
+                        console.log(err);
+                    }
+                    eachDone();
+                });
+            }, function(err) {
+                callback();
+            });
+
+        }, timeBetween, next);
+
+    }, function (err) {
+        if (err) {
+            console.log(err);
+        }
+        next();
+    });
+
+};
+
+logger.createLogFileIfNotExists(startLogging);
