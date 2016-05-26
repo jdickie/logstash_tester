@@ -1,6 +1,7 @@
 var async = require('async');
 var fs = require('fs');
 var _ = require('lodash');
+var moment = require('moment');
 
 var LogServer = function() {};
 
@@ -13,11 +14,15 @@ LogServer.prototype.MessageTemplate = _.template("<%= timestamp %> Message=<%= m
 
 LogServer.prototype.LogPath = "/tmp/tmpLog.log";
 
+LogServer.prototype.getTimeStamp = function() {
+  return moment().format();
+};
+
 LogServer.prototype.getFailureMessage = function(callback) {
     var self = this;
     try {
         fs.writeFile(self.LogPath, self.MessageTemplate({
-                timestamp: new Date().getTime(),
+                timestamp: self.getTimeStamp(),
                 message: "This is a failure message",
                 userid: _.random(1000, 20000),
                 queue: "IncomingQueue",
@@ -33,7 +38,7 @@ LogServer.prototype.getSuccessMessage = function(callback) {
     var self = this;
     try {
         fs.writeFile(self.LogPath, self.MessageTemplate({
-                timestamp: new Date().getTime(),
+                timestamp: self.getTimeStamp(),
                 message: "This is a success message",
                 userid: _.random(1000, 20000),
                 queue: "IncomingQueue",

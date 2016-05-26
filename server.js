@@ -16,12 +16,11 @@ async.forever(function(next) {
     var logMessage = "";
     setTimeout(function(callback) {
         if (messageCount % failureFrequency) {
-            logger.getSuccessMessage(next);
+            logger.getSuccessMessage(callback);
         } else {
-            logger.getFailureMessage(next);
+            logger.getFailureMessage(callback);
         }
         messageCount++;
-        callback(null);
     }, timeBetween, next);
 
 }, function(err) {
