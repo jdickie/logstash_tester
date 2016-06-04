@@ -20,4 +20,5 @@ grokfiles/*
 !grokfiles/devbox
 !grokfiles/output_dev.conf
 
-server_test.js
+config
+!config/default.json
