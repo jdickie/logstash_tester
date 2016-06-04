@@ -19,3 +19,5 @@ grokfiles/*
 !grokfiles/grok_parse_default.conf
 !grokfiles/devbox
 !grokfiles/output_dev.conf
+
+server_test.js
